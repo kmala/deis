@@ -1,0 +1,65 @@
+{
+   "kind":"ReplicationController",
+   "apiVersion":"v1",
+   "metadata":{
+      "name":"deis-router",
+      "labels":{
+         "name":"deis-router"
+      }
+   },
+   "spec":{
+      "replicas":1,
+      "selector":{
+         "name":"deis-router"
+      },
+      "template":{
+         "metadata":{
+            "labels":{
+               "name":"deis-router"
+            }
+         },
+         "spec":{
+            "containers":[
+               {
+                  "name":"deis-router",
+                  "image":"deis/router:v1.9.0",
+                  "ports":[
+                     {
+                        "hostPort":2222,
+                        "containerPort":2222
+                     },
+                     {
+                        "hostPort":443,
+                        "containerPort":443
+                     },
+                     {
+                        "hostPort":80,
+                        "containerPort":80
+                     }
+                   ],
+                   "env":[
+                     {
+                       "name" : "HOST",
+                       "value" : "10.240.172.112"
+                     },
+                     {
+                       "name" : "EXTERNAL_PORT",
+                       "value" : "80"
+                     }
+                   ],
+                   "volumeMounts": [
+                    { "name": "env",
+                      "mountPath": "/etc/environment"}
+                    ]
+               }
+            ],
+            "volumes":[
+              { "name": "env",
+                "hostPath": {
+                    "path": "/etc/environment"}
+              }
+            ]
+         }
+      }
+   }
+}

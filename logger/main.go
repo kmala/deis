@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"log"
@@ -33,7 +34,7 @@ func init() {
 	flag.StringVar(&drainURI, "drain-uri", "", "default drainURI, once set in etcd, this has no effect.")
 	flag.StringVar(&syslogd.LogRoot, "log-root", "/data/logs", "log path to store logs")
 	flag.BoolVar(&enablePublish, "enable-publish", false, "enable publishing to service discovery")
-	flag.StringVar(&publishHost, "publish-host", getopt("HOST", "127.0.0.1"), "service discovery hostname")
+	flag.StringVar(&publishHost, "publish-host", getHostIP("127.0.0.1"), "service discovery hostname")
 	flag.IntVar(&publishInterval, "publish-interval", 10, "publish interval in seconds")
 	flag.StringVar(&publishPath, "publish-path", getopt("ETCD_PATH", "/deis/logs"), "path to publish host/port information")
 	flag.StringVar(&publishPort, "publish-port", getopt("ETCD_PORT", "4001"), "service discovery port")
@@ -107,4 +108,21 @@ func getopt(name, dfault string) string {
 		value = dfault
 	}
 	return value
+}
+
+func getHostIP(dfault string) string {
+	f, err := os.Open("/etc/environment")
+	if err != nil {
+		log.Println(err)
+	}
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		s := strings.Split(line, "=")
+		name, ip := s[0], s[1]
+		if name == "COREOS_PRIVATE_IPV4" {
+			return ip
+		}
+	}
+	return dfault
 }

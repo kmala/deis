@@ -1,0 +1,61 @@
+{
+   "kind":"ReplicationController",
+   "apiVersion":"v1",
+   "metadata":{
+      "name":"deis-database",
+      "labels":{
+         "name":"deis-database"
+      }
+   },
+   "spec":{
+      "replicas":1,
+      "selector":{
+         "name":"deis-database"
+      },
+      "template":{
+         "metadata":{
+            "labels":{
+               "name":"deis-database"
+            }
+         },
+         "spec":{
+            "containers":[
+               {
+                  "name":"deis-database",
+                  "image":"192.168.59.103:5000/deis/database:git-169e9d5",
+                  "ports":[
+                     {
+                        "hostPort":5432,
+                        "containerPort":5432
+                     }
+                   ],
+                   "env":[
+                     {
+                       "name" : "EXTERNAL_PORT",
+                       "value" : "5432"
+                     }
+                   ],
+                   "volumeMounts": [
+                    { "name": "env",
+                      "mountPath": "/etc/environment"},
+                      {
+                        "name": "postgresql",
+                        "mountPath": "/var/lib/postgresql"
+                      }
+                    ]
+               }
+            ],
+            "volumes":[
+              { "name": "env",
+                "hostPath": {
+                    "path": "/etc/environment"}
+              },
+              {
+                "name": "postgresql",
+                "emptyDir": {}
+              }
+            ]
+         }
+      }
+   }
+}

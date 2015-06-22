@@ -1,0 +1,72 @@
+{
+   "kind":"ReplicationController",
+   "apiVersion":"v1",
+   "metadata":{
+      "name":"deis-builder",
+      "labels":{
+         "name":"deis-builder"
+      }
+   },
+   "spec":{
+      "replicas":1,
+      "selector":{
+         "name":"deis-builder"
+      },
+      "template":{
+         "metadata":{
+            "labels":{
+               "name":"deis-builder"
+            }
+         },
+         "spec":{
+            "containers":[
+               {
+                  "name":"deis-builder",
+                  "image":"registry.smothiki.io:5000/deis/builder:git-42a5ab1",
+                  "ports":[
+                     {
+                        "hostPort":2223,
+                        "containerPort":22
+                     }
+                   ],
+                   "env":[
+                     {
+                       "name" : "EXTERNAL_PORT",
+                       "value" : "2223"
+                     }
+                   ],
+                   "volumeMounts": [
+                      { "name": "env",
+                        "mountPath": "/etc/environment"
+                      },
+                      { "name": "envproxy",
+                        "mountPath": "/etc/environment_proxy"
+                      },
+                      {
+                        "name": "docker",
+                        "mountPath": "/var/lib/docker"
+                      }
+                    ],
+                    "securityContext": {
+                      "privileged": true
+                    }
+               }
+            ],
+            "volumes":[
+              { "name": "env",
+                "hostPath": {
+                    "path": "/etc/environment"}
+              },
+              { "name": "envproxy",
+                "hostPath": {
+                    "path": "/etc/environment_proxy"}
+              },
+              {
+                "name": "docker",
+                "emptyDir": {}
+              }
+            ]
+         }
+      }
+   }
+}

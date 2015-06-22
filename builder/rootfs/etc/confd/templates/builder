@@ -56,7 +56,7 @@ CACHE_DIR="${REPO_DIR}/cache"
 
 # define image names
 IMAGE_NAME="$APP_NAME:git-$SHORT_SHA"
-TMP_IMAGE="{{ getv "/deis/registry/host" }}:{{ getv "/deis/registry/port" }}/$IMAGE_NAME"
+TMP_IMAGE="{{ getenv "DEIS_REGISTRY_SERVICE_HOST" }}:{{ getenv "DEIS_REGISTRY_SERVICE_PORT" }}/$IMAGE_NAME"
 
 # create app directories
 mkdir -p $BUILD_DIR $CACHE_DIR

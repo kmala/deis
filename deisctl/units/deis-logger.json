@@ -1,0 +1,60 @@
+{
+   "kind":"ReplicationController",
+   "apiVersion":"v1",
+   "metadata":{
+      "name":"deis-logger",
+      "labels":{
+         "name":"deis-logger"
+      }
+   },
+   "spec":{
+      "replicas":1,
+      "selector":{
+         "name":"deis-logger"
+      },
+      "template":{
+         "metadata":{
+            "labels":{
+               "name":"deis-logger"
+            }
+         },
+         "spec":{
+            "containers":[
+               {
+                  "name":"deis-logger",
+                  "image":"192.168.59.103:5000/deis/logger:git-c31cf28",
+                  "ports":[
+                     {
+                        "hostPort":514,
+                        "containerPort":514,
+                        "protocol":"UDP"
+                     }
+                   ],
+                   "env":[
+                     {
+                       "name" : "EXTERNAL_PORT",
+                       "value" : "514"
+                     }
+                   ],
+                   "volumeMounts": [
+                    { "name": "logs",
+                      "mountPath": "/data"},
+                    { "name": "env",
+                      "mountPath": "/etc/environment"}
+                    ]
+               }
+            ],
+            "volumes":[
+              { "name": "logs",
+                "hostPath": {
+                    "path": "/var/lib/deis/store"}
+              },
+              { "name": "env",
+                "hostPath": {
+                    "path": "/etc/environment"}
+              }
+            ]
+         }
+      }
+   }
+}

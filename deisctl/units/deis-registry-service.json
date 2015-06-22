@@ -1,0 +1,22 @@
+{
+   "kind":"Service",
+   "apiVersion":"v1",
+   "metadata":{
+      "name":"deis-registry",
+      "labels":{
+         "name":"deis-registry"
+      }
+   },
+   "spec":{
+      "ports": [
+        {
+          "port":80,
+          "targetPort":5000,
+          "protocol":"TCP"
+        }
+      ],
+      "selector":{
+         "name":"deis-registry"
+      }
+   }
+}

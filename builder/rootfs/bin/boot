@@ -10,6 +10,13 @@ if [[ -f /etc/environment_proxy ]]; then
 	source /etc/environment_proxy
 fi
 
+while IFS='' read -r line || [[ -n $line ]]; do
+    IFS='=' read -a array <<< "$line"
+    if [ "${array[0]}" == 'COREOS_PRIVATE_IPV4' ]; then
+        export HOST="${array[1]}"
+    fi
+done < "/etc/environment"
+
 # set debug based on envvar
 [[ $DEBUG ]] && set -x
 

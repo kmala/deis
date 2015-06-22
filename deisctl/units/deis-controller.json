@@ -1,0 +1,67 @@
+{
+   "kind":"ReplicationController",
+   "apiVersion":"v1",
+   "metadata":{
+      "name":"deis-controller",
+      "labels":{
+         "name":"deis-controller"
+      }
+   },
+   "spec":{
+      "replicas":1,
+      "selector":{
+         "name":"deis-controller"
+      },
+      "template":{
+         "metadata":{
+            "labels":{
+               "name":"deis-controller"
+            }
+         },
+         "spec":{
+            "containers":[
+               {
+                  "name":"deis-controller",
+                  "image":"registry.smothiki.io:5000/deis/controller:git-2923993",
+                  "ports":[
+                     {
+                        "hostPort":8000,
+                        "containerPort":8000
+                     }
+                   ],
+                   "env":[
+                     {
+                       "name" : "EXTERNAL_PORT",
+                       "value" : "8000"
+                     }
+                   ],
+                   "volumeMounts": [
+                    { "name": "logs",
+                      "mountPath": "/data"},
+                    { "name": "env",
+                      "mountPath": "/etc/environment"},
+		                { "name": "sock",
+                      "mountPath": "/var/run/docker.sock"}
+                    ]
+               }
+            ],
+            "volumes":[
+              { "name": "logs",
+                "hostPath": {
+                    "path": "/var/lib/deis/store"}
+              },
+              { "name": "env",
+                "hostPath": {
+                    "path": "/etc/environment"}
+              },
+      	      {
+      		        "name":"sock",
+      		          "hostPath":{
+      			             "path":"/var/run/docker.sock"
+                    }
+      	      }
+            ]
+         }
+      }
+   }
+}

@@ -33,7 +33,7 @@ func main() {
 	}
 
 	log.Debug("reading environment variables...")
-	host := getopt("HOST", "127.0.0.1")
+	host := getHostIP("127.0.0.1")
 
 	etcdPort := getopt("ETCD_PORT", "4001")
 
@@ -201,4 +201,21 @@ func getopt(name, dfault string) string {
 		value = dfault
 	}
 	return value
+}
+
+func getHostIP(dfault string) string {
+	f, err := os.Open("/etc/environment")
+	if err != nil {
+		log.Println(err)
+	}
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		s := strings.Split(line, "=")
+		name, ip := s[0], s[1]
+		if name == "COREOS_PRIVATE_IPV4" {
+			return ip
+		}
+	}
+	return dfault
 }
