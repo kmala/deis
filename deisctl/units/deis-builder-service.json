@@ -1,0 +1,22 @@
+{
+   "kind":"Service",
+   "apiVersion":"v1",
+   "metadata":{
+      "name":"deis-builder",
+      "labels":{
+         "name":"deis-builder"
+      }
+   },
+   "spec":{
+      "ports": [
+        {
+          "port":80,
+          "targetPort":22,
+          "protocol":"TCP"
+        }
+      ],
+      "selector":{
+         "name":"deis-builder"
+      }
+   }
+}

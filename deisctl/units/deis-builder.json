@@ -22,23 +22,14 @@
             "containers":[
                {
                   "name":"deis-builder",
-                  "image":"registry.smothiki.io:5000/deis/builder:git-1ce86f9",
-                  "ports":[
-                     {
-                        "hostPort":2223,
-                        "containerPort":22
-                     }
-                   ],
+                  "image":"registry.smothiki.io:5000/deis/builder:git-b75a13b",
                    "env":[
                      {
-                       "name" : "EXTERNAL_PORT",
-                       "value" : "2223"
+                       "name" : "HOST",
+                       "value" : "10.240.3.1"
                      }
                    ],
                    "volumeMounts": [
-                      { "name": "env",
-                        "mountPath": "/etc/environment"
-                      },
                       { "name": "envproxy",
                         "mountPath": "/etc/environment_proxy"
                       },
@@ -53,10 +44,6 @@
                }
             ],
             "volumes":[
-              { "name": "env",
-                "hostPath": {
-                    "path": "/etc/environment"}
-              },
               { "name": "envproxy",
                 "hostPath": {
                     "path": "/etc/environment_proxy"}

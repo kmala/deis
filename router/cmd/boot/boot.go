@@ -39,9 +39,9 @@ func main() {
 
 	etcdPath := getopt("ETCD_PATH", "/deis/router")
 
-	hostEtcdPath := getopt("HOST_ETCD_PATH", "/deis/router/hosts/"+host)
+	//	hostEtcdPath := getopt("HOST_ETCD_PATH", "/deis/router/hosts/"+host)
 
-	externalPort := getopt("EXTERNAL_PORT", "80")
+	//externalPort := getopt("EXTERNAL_PORT", "80")
 
 	client := etcd.NewClient([]string{"http://" + host + ":" + etcdPort})
 
@@ -54,7 +54,7 @@ func main() {
 	mkdirEtcd(client, "/deis/domains")
 	mkdirEtcd(client, "/deis/builder")
 	mkdirEtcd(client, "/deis/certs")
-	mkdirEtcd(client, "/deis/router/hosts")
+	//mkdirEtcd(client, "/deis/router/hosts")
 	mkdirEtcd(client, "/deis/router/hsts")
 	mkdirEtcd(client, "/registry/services/specs/default")
 
@@ -73,7 +73,7 @@ func main() {
 
 	go launchConfd(host + ":" + etcdPort)
 
-	go publishService(client, hostEtcdPath, host, externalPort, uint64(ttl.Seconds()))
+	//go publishService(client, hostEtcdPath, host, externalPort, uint64(ttl.Seconds()))
 
 	log.Info("deis-router running...")
 

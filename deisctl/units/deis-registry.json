@@ -22,7 +22,7 @@
             "containers":[
                {
                   "name":"deis-registry",
-                  "image":"deis/registry:v1.9.0",
+                  "image":"registry.smothiki.io:5000/deis/registry:git-c9b8f42",
                    "env":[
                      {
                        "name" : "HOST",

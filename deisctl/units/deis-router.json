@@ -22,7 +22,7 @@
             "containers":[
                {
                   "name":"deis-router",
-                  "image":"deis/router:v1.9.0",
+                  "image":"registry.smothiki.io:5000/deis/router:git-7c2ae7f",
                   "ports":[
                      {
                         "hostPort":2222,
@@ -41,10 +41,6 @@
                      {
                        "name" : "HOST",
                        "value" : "10.240.172.112"
-                     },
-                     {
-                       "name" : "EXTERNAL_PORT",
-                       "value" : "80"
                      }
                    ],
                    "volumeMounts": [

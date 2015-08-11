@@ -1,0 +1,22 @@
+{
+   "kind":"Service",
+   "apiVersion":"v1",
+   "metadata":{
+      "name":"deis-controller",
+      "labels":{
+         "name":"deis-controller"
+      }
+   },
+   "spec":{
+      "ports": [
+        {
+          "port":80,
+          "targetPort":8000,
+          "protocol":"TCP"
+        }
+      ],
+      "selector":{
+         "name":"deis-controller"
+      }
+   }
+}
