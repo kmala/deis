@@ -28,9 +28,9 @@ ENABLE_PLACEMENT_OPTIONS = """{{ if exists "/deis/platform/enablePlacementOption
 
 # use the private registry module
 REGISTRY_MODULE = 'registry.private'
-REGISTRY_URL = '{{ getv "/deis/registry/protocol" }}://{{ getv "/deis/registry/host" }}:{{ getv "/deis/registry/port" }}'  # noqa
-REGISTRY_HOST = '{{ getv "/deis/registry/host" }}'
-REGISTRY_PORT = '{{ getv "/deis/registry/port" }}'
+REGISTRY_URL = '{{ getv "/deis/registry/protocol" }}://{{ getenv "DEIS_REGISTRY_SERVICE_HOST" }}:{{ getenv "DEIS_REGISTRY_SERVICE_PORT" }}'  # noqa
+REGISTRY_HOST = '{{ getenv "DEIS_REGISTRY_SERVICE_HOST" }}'
+REGISTRY_PORT = '{{ getenv "DEIS_REGISTRY_SERVICE_PORT" }}'
 
 # default to sqlite3, but allow postgresql config through envvars
 DATABASES = {

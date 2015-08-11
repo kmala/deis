@@ -9,18 +9,10 @@ set -eo pipefail
 # set debug based on envvar
 [[ $DEBUG ]] && set -x
 
-while IFS='' read -r line || [[ -n $line ]]; do
-    IFS='=' read -a array <<< "$line"
-    if [ "${array[0]}" == 'COREOS_PRIVATE_IPV4' ]; then
-        export HOST="${array[1]}"
-    fi
-done < "/etc/environment"
-
 # configure etcd
 export ETCD_PORT="${ETCD_PORT:-4001}"
 export ETCD="$HOST:$ETCD_PORT"
 export ETCD_PATH="${ETCD_PATH:-/deis/registry}"
-export HOST_ETCD_PATH="${HOST_ETCD_PATH:-/deis/registry/hosts/$HOST}"
 export ETCD_TTL="${ETCD_TTL:-20}"
 
 # run.sh requires $REGISTRY_PORT
@@ -79,36 +71,5 @@ trap on_exit INT TERM
 confd -node "$ETCD" --confdir /app --log-level error --interval 5 &
 
 echo deis-registry running...
-
-# publish the service to etcd using the injected EXTERNAL_PORT
-if [[ ! -z $EXTERNAL_PORT ]]; then
-
-	# configure service discovery
-	PORT=${PORT:-5000}
-	PROTO=${PROTO:-tcp}
-
-	set +e
-
-	# wait for the service to become available on PORT
-	sleep 1 && while [[ -z $(netstat -lnt | awk "\$6 == \"LISTEN\" && \$4 ~ \".$PORT\" && \$1 ~ \"$PROTO.?\"") ]] ; do sleep 1; done
-
-	# while the port is listening, publish to etcd
-	while [[ ! -z $(netstat -lnt | awk "\$6 == \"LISTEN\" && \$4 ~ \".$PORT\" && \$1 ~ \"$PROTO.?\"") ]] ; do
-		if etcdctl --no-sync -C "$ETCD" mk "${ETCD_PATH}/masterLock" "$HOSTNAME" --ttl "$ETCD_TTL" >/dev/null 2>&1 \
-		|| [[ $(etcdctl --no-sync -C "$ETCD" get "${ETCD_PATH}/masterLock") == "$HOSTNAME" ]] ; then
-			etcdctl --no-sync -C "$ETCD" set "$ETCD_PATH/host" "$HOST" --ttl "$ETCD_TTL" >/dev/null
-			etcdctl --no-sync -C "$ETCD" set "$ETCD_PATH/port" "$EXTERNAL_PORT" --ttl "$ETCD_TTL" >/dev/null
-			etcdctl --no-sync -C "$ETCD" update "${ETCD_PATH}/masterLock" "$HOSTNAME" --ttl "$ETCD_TTL" >/dev/null
-		fi
-		etcdctl --no-sync -C "$ETCD" set "$HOST_ETCD_PATH/host" "$HOST" --ttl "$ETCD_TTL" >/dev/null
-		etcdctl --no-sync -C "$ETCD" set "$HOST_ETCD_PATH/port" "$EXTERNAL_PORT" --ttl "$ETCD_TTL" >/dev/null
-
-		sleep $((ETCD_TTL/2)) # sleep for half the TTL
-	done
-
-	# if the loop quits, something went wrong
-	exit 1
-
-fi
 
 wait

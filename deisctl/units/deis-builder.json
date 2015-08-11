@@ -22,7 +22,7 @@
             "containers":[
                {
                   "name":"deis-builder",
-                  "image":"registry.smothiki.io:5000/deis/builder:git-42a5ab1",
+                  "image":"registry.smothiki.io:5000/deis/builder:git-1ce86f9",
                   "ports":[
                      {
                         "hostPort":2223,
