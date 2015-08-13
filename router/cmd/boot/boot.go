@@ -3,7 +3,10 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
+	"io/ioutil"
 	"net"
+	"net/http"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -33,7 +36,7 @@ func main() {
 	}
 
 	log.Debug("reading environment variables...")
-	host := getHostIP("127.0.0.1")
+	host := getopt("HOST", "127.0.0.1")
 
 	etcdPort := getopt("ETCD_PORT", "4001")
 
@@ -74,12 +77,70 @@ func main() {
 	go launchConfd(host + ":" + etcdPort)
 
 	//go publishService(client, hostEtcdPath, host, externalPort, uint64(ttl.Seconds()))
+	go publishApps(client, uint64(ttl.Seconds()))
 
 	log.Info("deis-router running...")
 
 	exitChan := make(chan os.Signal, 2)
 	signal.Notify(exitChan, syscall.SIGTERM, syscall.SIGINT)
 	<-exitChan
+}
+
+func publishApps(client *etcd.Client, ttl uint64) {
+	for {
+		val := "104.154.52.204"
+		servURL := "http://" + val + ":8080//api/v1/namespaces/"
+		servReq, err := http.NewRequest("GET", servURL, nil)
+		if err != nil {
+			log.Fatalf("can't connect to the apiserver: %v", err)
+		}
+		servClient := &http.Client{}
+		servResp, err := servClient.Do(servReq)
+		if err != nil {
+			log.Fatalf("error in sending the request: %v", err)
+		}
+		body, _ := ioutil.ReadAll(servResp.Body)
+		servResp.Body.Close()
+		var data map[string]interface{}
+		err = json.Unmarshal(body, &data)
+		nameSpaces := data["items"].([]interface{})
+		for i := range nameSpaces {
+			nameSpace := nameSpaces[i].(map[string]interface{})
+			metadata := nameSpace["metadata"].(map[string]interface{})
+			//log.Info("response Body: %v", metadata["name"])
+
+			if metadata["name"] != "deis" {
+				servURL = "http://" + val + ":8080//api/v1/namespaces/" + metadata["name"].(string) + "/services"
+				servReq, err = http.NewRequest("GET", servURL, nil)
+				if err != nil {
+					log.Fatalf("can't connect to the apiserver: %v", err)
+				}
+				servClient = &http.Client{}
+				servResp, err = servClient.Do(servReq)
+				if err != nil {
+					log.Fatalf("error in sending the request: %v", err)
+				}
+				body, _ = ioutil.ReadAll(servResp.Body)
+				servResp.Body.Close()
+
+				var data1 map[string]interface{}
+				err = json.Unmarshal(body, &data1)
+				services := data1["items"].([]interface{})
+				for i := range services {
+					service := services[i].(map[string]interface{})
+					spec := service["spec"].(map[string]interface{})
+					serviceMetadata := service["metadata"].(map[string]interface{})
+					labels := serviceMetadata["labels"].(map[string]interface{})
+					//log.Info("response Body: %v", labels["name"])
+					//log.Info("response Body: %v", spec["clusterIP"])
+					if labels["name"] != nil {
+						setEtcd(client, "/registry/services/specs/"+metadata["name"].(string)+"/"+labels["name"].(string), spec["clusterIP"].(string), ttl)
+					}
+				}
+			}
+		}
+		time.Sleep(timeout)
+	}
 }
 
 func launchCron() {
@@ -203,6 +264,7 @@ func getopt(name, dfault string) string {
 	return value
 }
 
+/*
 func getHostIP(dfault string) string {
 	f, err := os.Open("/etc/environment")
 	if err != nil {
@@ -218,4 +280,4 @@ func getHostIP(dfault string) string {
 		}
 	}
 	return dfault
-}
+}*/

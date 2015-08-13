@@ -22,7 +22,7 @@
             "containers":[
                {
                   "name":"deis-router",
-                  "image":"registry.smothiki.io:5000/deis/router:git-7c2ae7f",
+                  "image":"registry.smothiki.io:5000/deis/router:git-4307b33",
                   "ports":[
                      {
                         "hostPort":2222,
@@ -42,18 +42,8 @@
                        "name" : "HOST",
                        "value" : "10.240.172.112"
                      }
-                   ],
-                   "volumeMounts": [
-                    { "name": "env",
-                      "mountPath": "/etc/environment"}
-                    ]
+                   ]
                }
-            ],
-            "volumes":[
-              { "name": "env",
-                "hostPath": {
-                    "path": "/etc/environment"}
-              }
             ]
          }
       }
