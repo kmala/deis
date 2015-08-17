@@ -2,9 +2,9 @@
    "kind":"Service",
    "apiVersion":"v1",
    "metadata":{
-      "name":"deis-registry",
+      "name":"deis-database",
       "labels":{
-         "name":"deis-registry",
+         "name":"deis-database",
          "app":"deis"
       }
    },
@@ -12,12 +12,12 @@
       "ports": [
         {
           "port":80,
-          "targetPort":5000,
+          "targetPort":5432,
           "protocol":"TCP"
         }
       ],
       "selector":{
-         "name":"deis-registry"
+         "name":"deis-database"
       }
    }
 }

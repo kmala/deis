@@ -22,7 +22,7 @@
             "containers":[
                {
                   "name":"deis-router",
-                  "image":"registry.smothiki.io:5000/deis/router:git-4307b33",
+                  "image":"registry.smothiki.io:5000/deis/router:git-e972052",
                   "ports":[
                      {
                         "hostPort":2222,
@@ -40,7 +40,7 @@
                    "env":[
                      {
                        "name" : "HOST",
-                       "value" : "10.240.172.112"
+                       "value" : "10.240.84.7"
                      }
                    ]
                }

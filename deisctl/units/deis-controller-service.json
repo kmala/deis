@@ -4,7 +4,8 @@
    "metadata":{
       "name":"deis-controller",
       "labels":{
-         "name":"deis-controller"
+         "name":"deis-controller",
+         "app":"deis"
       }
    },
    "spec":{

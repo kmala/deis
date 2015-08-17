@@ -4,7 +4,8 @@
    "metadata":{
       "name":"deis-builder",
       "labels":{
-         "name":"deis-builder"
+         "name":"deis-builder",
+         "app":"deis"
       }
    },
    "spec":{

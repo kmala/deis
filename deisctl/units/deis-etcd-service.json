@@ -1,0 +1,36 @@
+{
+   "kind":"Service",
+   "apiVersion":"v1",
+   "metadata":{
+      "name":"deis-etcd1",
+      "labels":{
+         "name":"deis-etcd1",
+         "app":"deis"
+      }
+   },
+   "spec":{
+      "ports": [
+        {
+          "name": "serverport",
+          "port":2380,
+          "targetPort":2380,
+          "protocol":"TCP"
+        },
+        {
+          "name": "clientport",
+          "port":4001,
+          "targetPort":4001,
+          "protocol":"TCP"
+        },
+        {
+          "name": "clientport1",
+          "port":2379,
+          "targetPort":2379,
+          "protocol":"TCP"
+        }
+      ],
+      "selector":{
+         "name":"deis-etcd1"
+      }
+   }
+}

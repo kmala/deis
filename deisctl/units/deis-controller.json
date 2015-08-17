@@ -22,18 +22,16 @@
             "containers":[
                {
                   "name":"deis-controller",
-                  "image":"registry.smothiki.io:5000/deis/controller:git-bf6077d",
+                  "image":"registry.smothiki.io:5000/deis/controller:git-bca9e36",
                    "env":[
                      {
                        "name" : "HOST",
-                       "value" : "10.240.3.1"
+                       "value" : "10.240.84.7"
                      }
                    ],
                    "volumeMounts": [
                     { "name": "logs",
-                      "mountPath": "/data"},
-		                { "name": "sock",
-                      "mountPath": "/var/run/docker.sock"}
+                      "mountPath": "/data"}
                     ]
                }
             ],
@@ -41,13 +39,7 @@
               { "name": "logs",
                 "hostPath": {
                     "path": "/var/lib/deis/store"}
-              },
-      	      {
-      		        "name":"sock",
-      		          "hostPath":{
-      			             "path":"/var/run/docker.sock"
-                    }
-      	      }
+              }
             ]
          }
       }

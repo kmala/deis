@@ -22,22 +22,14 @@
             "containers":[
                {
                   "name":"deis-database",
-                  "image":"192.168.59.103:5000/deis/database:git-169e9d5",
-                  "ports":[
-                     {
-                        "hostPort":5432,
-                        "containerPort":5432
-                     }
-                   ],
+                  "image":"registry.smothiki.io:5000/deis/database:git-31d2adb",
                    "env":[
                      {
-                       "name" : "EXTERNAL_PORT",
-                       "value" : "5432"
+                       "name" : "HOST",
+                       "value" : "10.240.3.1"
                      }
                    ],
                    "volumeMounts": [
-                    { "name": "env",
-                      "mountPath": "/etc/environment"},
                       {
                         "name": "postgresql",
                         "mountPath": "/var/lib/postgresql"
@@ -46,10 +38,6 @@
                }
             ],
             "volumes":[
-              { "name": "env",
-                "hostPath": {
-                    "path": "/etc/environment"}
-              },
               {
                 "name": "postgresql",
                 "emptyDir": {}
